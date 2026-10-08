@@ -1,0 +1,786 @@
+Saya memiliki file Excel bernama:
+
+`Jurnal_XAUUSD_USC_5persen.xlsx`
+
+File tersebut sudah saya upload ke project ini.
+
+TUGAS UTAMA:
+Pelajari file Excel tersebut secara menyeluruh terlebih dahulu sebelum membuat UI.
+
+Jangan hanya membaca nilai hasil Excel. Analisis juga:
+
+* nama sheet
+* struktur setiap kolom
+* semua formula
+* hubungan antarformula
+* input manual
+* nilai default
+* perhitungan compounding
+* perhitungan saldo
+* perhitungan profit %
+* logika target
+* logika tanggal hari kerja
+* conditional formatting
+* milestone Rp100 juta
+* catatan/jurnal harian
+
+Kemudian ubah workbook tersebut menjadi sebuah WEBSITE / WEB APP interaktif yang memiliki fungsi dan hasil perhitungan yang setara dengan Excel.
+
+PENTING:
+Jangan membuat website yang sekadar menampilkan isi Excel sebagai tabel.
+
+Website harus menjadi aplikasi jurnal trading yang benar-benar interaktif.
+
+==================================================
+
+1. DATA DAN LOGIKA EXCEL
+   ==================================================
+
+Gunakan workbook asli sebagai SOURCE OF TRUTH.
+
+Sheet:
+`Checklist`
+
+Parameter utama:
+
+* Modal awal (USC)
+* Kurs: 1 USC = Rp
+* Target per hari
+* Tanggal mulai
+
+Default dari file saat ini:
+
+* Modal awal = 2503 USC
+* Kurs = 179 Rupiah / USC
+* Target per hari = 5%
+* Tanggal mulai = 1 Oktober 2026
+
+User harus bisa mengubah parameter tersebut dari website.
+
+Setiap hari memiliki:
+
+1. No
+2. Tanggal
+3. Hari
+4. Profit Aktual (USC)
+5. Profit Aktual (Rp)
+6. Saldo Aktual (USC)
+7. Saldo Aktual (Rp)
+8. Profit %
+9. Tercapai?
+10. Target Profit (USC)
+11. Target Saldo (USC)
+12. Target Saldo (Rp)
+13. Catatan
+
+Hanya data berikut yang merupakan input manual:
+
+* Modal awal
+* Kurs
+* Target %
+* Tanggal mulai
+* Profit Aktual (USC) setiap hari
+* Catatan setiap hari
+
+Semua data turunan harus dihitung oleh aplikasi.
+
+==================================================
+2. PERTAHANKAN LOGIKA PERHITUNGAN
+=================================
+
+Implementasikan logika berikut secara akurat.
+
+Profit Aktual Rupiah:
+
+Profit_Rp = Profit_USC × Kurs
+
+Saldo Aktual USC:
+
+Saldo_USC = Modal_Awal + SUM seluruh Profit Aktual USC sampai hari tersebut.
+
+Saldo Aktual Rupiah:
+
+Saldo_Rp = Saldo_USC × Kurs
+
+Profit %:
+
+Profit_% = Profit_Aktual_USC / Saldo_sebelum_profit_USC
+
+Jangan menggunakan rumus yang menghasilkan denominator salah.
+
+Target Profit hari pertama:
+
+Target_Profit_1 = Modal_Awal × Target_%
+
+Target Saldo hari pertama:
+
+Target_Saldo_1 = Modal_Awal + Target_Profit_1
+
+Target Profit hari berikutnya:
+
+Target_Profit_hari_ini =
+Target_Saldo_hari_sebelumnya × Target_%
+
+Target Saldo:
+
+Target_Saldo_hari_ini =
+Target_Saldo_hari_sebelumnya + Target_Profit_hari_ini
+
+Dengan kata lain, target menggunakan sistem compound growth.
+
+Contoh jika target = 5%:
+
+Hari 1:
+2503 × 5%
+
+Hari 2:
+Target saldo hari 1 × 5%
+
+Hari 3:
+Target saldo hari 2 × 5%
+
+dan seterusnya.
+
+Status:
+
+Jika Profit_% >= Target_%:
+status = tercapai
+
+Jika Profit_% < Target_%:
+status = belum tercapai
+
+Jika Profit belum diisi:
+status = kosong.
+
+==================================================
+3. TANGGAL
+==========
+
+Tanggal pertama mengikuti `Tanggal mulai`.
+
+Hari berikutnya hanya menggunakan hari kerja:
+
+Senin
+Selasa
+Rabu
+Kamis
+Jumat
+
+Sabtu dan Minggu dilewati.
+
+Jangan memasukkan kalender hari libur nasional secara otomatis kecuali user meminta fitur tersebut.
+
+Pertahankan perilaku Excel asli.
+
+==================================================
+4. MILESTONE Rp100 JUTA
+=======================
+
+Buat milestone khusus ketika:
+
+Target Saldo (Rp) pertama kali mencapai atau melewati:
+
+Rp100.000.000
+
+Milestone harus ditampilkan secara visual di dashboard dan tabel.
+
+Contoh:
+
+TARGET Rp100 JUTA
+Hari ke-XX
+Tanggal XX
+Target Saldo Rp XXX
+
+Gunakan logika "pertama kali menembus Rp100 juta", bukan setiap hari setelahnya.
+
+==================================================
+5. DASHBOARD
+============
+
+Website harus memiliki dashboard profesional.
+
+Di bagian atas tampilkan KPI utama:
+
+* Modal Awal
+* Saldo Saat Ini
+* Total Profit
+* Profit %
+* Target Hari Ini
+* Selisih terhadap Target
+* Hari Terisi
+* Hari Tercapai
+* Progress menuju Rp100 Juta
+* Estimasi / posisi terhadap jalur target
+
+Gunakan angka yang mudah dibaca.
+
+Contoh format:
+
+Rp 601.028
+3.357,70 USC
++854,70 USC
++34,13%
+
+Jangan membuat dashboard terlihat seperti aplikasi trading murahan.
+
+==================================================
+6. CHART
+========
+
+Buat visualisasi custom untuk:
+
+A. Saldo Aktual vs Target Saldo
+
+X-axis:
+Hari / tanggal
+
+Y-axis:
+Saldo USC atau Rupiah
+
+Tampilkan dua jalur:
+
+Actual
+Target
+
+B. Progress menuju Rp100 juta
+
+Gunakan visual yang elegan dan mudah dipahami.
+
+C. Profit harian
+
+Tampilkan profit positif dan negatif secara jelas.
+
+Chart harus responsif untuk desktop dan mobile.
+
+Gunakan library chart modern hanya jika benar-benar diperlukan.
+
+Jangan menggunakan chart bawaan yang terlihat generik.
+
+==================================================
+7. DESAIN UI
+============
+
+Ini bagian yang sangat penting.
+
+Saya TIDAK ingin website terlihat seperti template dashboard biasa.
+
+Style:
+
+GLASSMORPHISM PREMIUM
+
+Karakter:
+
+* smooth
+* clean
+* transparent
+* glass
+* premium
+* modern
+* profesional
+* elegan
+* minimal
+* sedikit futuristik
+* tidak ramai
+
+Gunakan:
+
+* translucent glass panels
+* backdrop blur
+* subtle border
+* soft shadow
+* layered transparency
+* depth yang halus
+* gradient yang sangat subtle
+* spacing yang lega
+* typography profesional
+* animasi halus
+
+Jangan membuat efek kaca terlalu berlebihan.
+
+Harus terasa seperti produk SaaS premium.
+
+==================================================
+8. BACKGROUND
+=============
+
+Gunakan background yang memiliki depth.
+
+Boleh menggunakan:
+
+* dark premium background
+* subtle gradient
+* very subtle ambient glow
+* blurred light sources
+* soft floating gradients
+
+Tetapi jangan membuat background terlalu ramai.
+
+Konten harus tetap menjadi fokus.
+
+==================================================
+9. JANGAN PAKAI ICON DEFAULT
+============================
+
+SANGAT PENTING:
+
+Jangan menggunakan ikon bawaan dari:
+
+* Bootstrap Icons
+* Font Awesome
+* Material Icons
+* Lucide
+* Heroicons
+* icon library generik lainnya
+
+Saya ingin identitas visual dibuat sendiri.
+
+Jika membutuhkan simbol visual, buat custom menggunakan:
+
+* CSS
+* SVG buatan sendiri
+* geometric shapes
+* custom line art
+* custom minimalist graphics
+
+Jangan gunakan emoji sebagai pengganti icon.
+
+Semua visual harus terasa original dan konsisten.
+
+==================================================
+10. BRANDING VISUAL
+===================
+
+Buat visual identity yang cocok untuk:
+
+Trading Journal
+XAUUSD
+USC
+Compound Growth
+Risk / Target Management
+
+Jangan memakai logo broker.
+
+Jangan memakai ikon forex generik seperti:
+
+* candlestick icon
+* dollar icon
+* arrow icon generik
+* rocket icon
+* trophy icon
+
+Jika ingin membuat simbol utama, desain sendiri menggunakan bentuk geometris minimal.
+
+==================================================
+11. TABEL JURNAL
+================
+
+Buat tabel jurnal yang profesional.
+
+Kolom:
+
+No
+Tanggal
+Hari
+Profit Aktual
+Profit Rp
+Saldo USC
+Saldo Rp
+Profit %
+Status
+Target Profit
+Target Saldo USC
+Target Saldo Rp
+Catatan
+
+Tabel harus:
+
+* responsive
+* horizontal scroll di mobile
+* sticky header
+* sticky kolom penting jika diperlukan
+* glass surface
+* readable
+* tidak terlalu padat
+
+Gunakan visual berbeda untuk:
+
+Profit positif
+Profit negatif
+Target tercapai
+Target tidak tercapai
+Milestone Rp100 juta
+
+Namun jangan menggunakan warna terlalu menyala.
+
+==================================================
+12. INPUT PROFIT HARIAN
+=======================
+
+Profit Aktual USC harus dapat diedit langsung dari tabel.
+
+Contoh:
+
+140.70
+422.00
+292.00
+
+Profit negatif juga harus diperbolehkan:
+
+-50
+-25.5
+
+Gunakan input yang nyaman.
+
+Ketika user mengubah profit:
+
+* saldo otomatis berubah
+* profit %
+  otomatis berubah
+* status berubah
+* target comparison berubah
+* chart berubah
+* dashboard KPI berubah
+* progress berubah
+
+Semua harus reactive.
+
+Tidak perlu reload halaman.
+
+==================================================
+13. CATATAN
+===========
+
+Setiap hari memiliki field Catatan.
+
+Contoh:
+
+"2 trade: +79,30 dan +61,40"
+
+Catatan dapat diedit langsung.
+
+==================================================
+14. EDIT PARAMETER
+==================
+
+Sediakan panel Settings / Parameter.
+
+User dapat mengubah:
+
+Modal Awal
+Kurs
+Target %
+Tanggal Mulai
+
+Ketika parameter berubah, seluruh kalkulasi harus dihitung ulang.
+
+Jangan hardcode hasil Excel.
+
+Gunakan fungsi kalkulasi terpusat.
+
+==================================================
+15. DATA PERSISTENCE
+====================
+
+Data user jangan hilang ketika browser direfresh.
+
+Untuk versi awal gunakan:
+
+localStorage
+
+Simpan:
+
+* parameter
+* profit harian
+* catatan
+* tanggal mulai
+
+Sediakan:
+
+Reset Data
+
+Tetapi tombol reset harus meminta konfirmasi terlebih dahulu.
+
+==================================================
+16. IMPORT / EXPORT
+===================
+
+Karena aplikasi berasal dari Excel, sediakan:
+
+Import Excel
+
+dan:
+
+Export Excel
+
+Jika memungkinkan, gunakan library XLSX untuk membaca/menulis workbook.
+
+Import harus dapat membaca file:
+
+`Jurnal_XAUUSD_USC_5persen.xlsx`
+
+Tetapi jangan bergantung pada Excel untuk melakukan kalkulasi.
+
+Setelah diimport:
+
+DATA → masuk ke state aplikasi → kalkulasi dilakukan oleh JavaScript/TypeScript.
+
+Excel hanya digunakan sebagai sumber data.
+
+==================================================
+17. ARSITEKTUR KODE
+===================
+
+Gunakan struktur kode yang bersih.
+
+Pisahkan:
+
+* data model
+* calculation engine
+* state management
+* UI components
+* chart components
+* persistence
+* Excel import/export
+* formatting utilities
+
+Jangan menaruh semua logic dalam satu file.
+
+Buat calculation engine khusus.
+
+Contoh konsep:
+
+calculateJournal(parameters, dailyEntries)
+
+Fungsi tersebut menghasilkan:
+
+days
+actualBalance
+targetBalance
+profitPercent
+targetStatus
+milestones
+summary
+chartsData
+
+==================================================
+18. AKURASI
+===========
+
+Jangan mengubah formula Excel secara sembarangan.
+
+Sebelum selesai:
+
+Bandingkan hasil website dengan workbook.
+
+Gunakan data yang sudah ada di Excel sebagai test case.
+
+Data awal workbook saat ini antara lain:
+
+Modal:
+2503 USC
+
+Kurs:
+179
+
+Target:
+5%
+
+Tanggal mulai:
+1 Oktober 2026
+
+Profit:
+
+1 Oktober:
+140.70 USC
+
+2 Oktober:
+422 USC
+
+5 Oktober:
+292 USC
+
+Hasil workbook saat ini:
+
+Total Profit:
+854.70 USC
+
+Saldo Aktual:
+3357.70 USC
+
+Saldo Rupiah:
+601028.30
+
+Hari tercapai:
+3 dari 3 hari terisi
+
+Gunakan angka tersebut sebagai salah satu regression test.
+
+Jika hasil aplikasi berbeda, periksa kembali formula sebelum menyelesaikan project.
+
+==================================================
+19. RESPONSIVE
+==============
+
+Website wajib sangat bagus pada:
+
+Desktop
+Tablet
+iPhone
+Android
+
+Mobile bukan sekadar mengecilkan desktop.
+
+Buat layout mobile yang benar-benar dipikirkan.
+
+Dashboard KPI dapat berubah menjadi card stack.
+
+Tabel dapat horizontal scroll.
+
+Input tetap mudah disentuh.
+
+==================================================
+20. ANIMATION
+=============
+
+Gunakan animasi yang halus.
+
+Contoh:
+
+* glass panel entrance
+* number transition
+* chart transition
+* hover
+* focus
+* tab transition
+
+Jangan gunakan:
+
+* bounce berlebihan
+* flashy animation
+* loading animation yang tidak perlu
+* efek neon berlebihan
+
+Targetnya:
+
+"premium financial SaaS"
+
+bukan:
+
+"gaming website".
+
+==================================================
+21. UX
+======
+
+Navigasi sederhana.
+
+Usulkan struktur:
+
+Dashboard
+Journal
+Analytics
+Settings
+
+Jika ternyata satu halaman lebih efektif, jangan memaksakan banyak halaman.
+
+Prioritaskan usability.
+
+==================================================
+22. EMPTY STATE
+===============
+
+Jika hari belum memiliki Profit Aktual:
+
+Jangan tampilkan:
+
+0% tercapai
+
+Jangan menganggapnya sebagai loss.
+
+Tampilkan status:
+
+Belum diisi
+
+atau
+
+Waiting for entry
+
+Begitu profit diisi, barulah kalkulasi dilakukan.
+
+==================================================
+23. FORMAT ANGKA
+================
+
+Gunakan format Indonesia yang profesional:
+
+Rp 601.028,30
+
+3.357,70 USC
+
+5,00%
+
+Gunakan pemisah ribuan dan desimal secara konsisten.
+
+==================================================
+24. SECURITY / DATA
+===================
+
+Jangan mengirim data jurnal ke server eksternal jika tidak diperlukan.
+
+Data cukup disimpan lokal.
+
+Tidak perlu login untuk versi pertama.
+
+==================================================
+25. KUALITAS VISUAL
+===================
+
+Sebelum menganggap project selesai, lakukan visual review.
+
+Pastikan:
+
+* tidak ada layout yang berantakan
+* tidak ada text overflow
+* tidak ada card terlalu besar
+* tidak ada icon generik
+* glass effect konsisten
+* typography konsisten
+* spacing konsisten
+* mobile nyaman
+* chart tidak menabrak elemen lain
+* tabel mudah dibaca
+
+Jangan puas dengan tampilan default hasil generator.
+
+Poles UI sampai terlihat seperti produk SaaS finansial yang benar-benar siap dipresentasikan.
+
+==================================================
+26. HASIL AKHIR
+===============
+
+Saya ingin hasil akhirnya terasa seperti:
+
+"Professional Trading Journal & Compound Growth Dashboard"
+
+bukan:
+
+"Excel yang dipindahkan ke website".
+
+File Excel:
+
+`Jurnal_XAUUSD_USC_5persen.xlsx`
+
+harus tetap disimpan di project sebagai source/reference.
+
+Sebelum coding:
+
+1. baca workbook
+2. pahami formula
+3. pahami struktur data
+4. pahami conditional formatting
+5. buat calculation model
+6. baru implementasikan UI
+
+Jangan menghapus atau mengubah file Excel sumber.
+
+Setelah implementasi selesai, lakukan test terhadap data Excel dan pastikan hasil kalkulasi website konsisten dengan workbook.
